@@ -71,3 +71,8 @@ Node* Node::sibling() {
     break;
   }
 }
+
+bool Node::hasChildren()
+{
+    return(left != NULL || right != NULL);
+}

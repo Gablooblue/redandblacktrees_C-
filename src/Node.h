@@ -15,4 +15,5 @@ public:
   char child();
   char color;
   int value;
+  bool hasChildren();
 };
