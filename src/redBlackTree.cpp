@@ -28,6 +28,9 @@ void validatecase4(Node*& node, Node*& tree);
 void validatecase5(Node*& node, Node*& tree);
 void rotate(Node*& root, int direction);
 Node* search(Node*& tree, int value);
+void DBCase1(Node*& tree, Node*& node);
+void DBCase2(Node*&tree, Node*& node);
+void DBCase3(Node*& tree, Node*& node);
 
 // saves the most recently added node
 Node* bago = NULL;
@@ -41,7 +44,7 @@ int main() {
     cout << "Menu:" << endl;
     cout << "[1] Insert Node" << endl;
     cout << "[2] Delete Node" << endl;
-    cout << "[3] Rotate Node (for debugging lmao)" << endl;
+//    cout << "[3] Rotate Node (for debugging lmao)" << endl;
     cout << "[4] Exit" << endl;
     cout << "Choice: ";
     cin >> choice;
@@ -61,7 +64,7 @@ int main() {
       deleteNode(tree, temp);
     }
     if (choice == 3) {
-      int nodeNum;
+      /*int nodeNum;
       int direction;
       cout << "Pick a node to rotate: ";
       cin >> nodeNum;
@@ -69,7 +72,8 @@ int main() {
       cin >> direction;
       Node* root = search(tree, nodeNum);
       /*if (root == tree) rotate(tree, direction);
-      else */rotate(root, direction);
+      else rotate(root, direction);*/
+      continue;
     }
   }
 }
@@ -177,42 +181,70 @@ void deleteCase3(Node*& tree, int val) {
   if (!succ) succ = inOrderPredecessor(node);
 
   cout << succ->value << " is " << node->value << "'s next value" << endl;
-
+  
   Node* parent = succ->parent;
   Node* nParent = node->parent;
   char nStat = node->child();
   char stat = succ->child();
 
-
-  if (succ->left) cout << succ->value << "->left is currently " << succ->left->value << endl;
-  else cout <<succ->value << "->left is currently NULL" << endl;
-  if (node->left) cout << "it will be changed to " << node->left->value << endl;
-  else cout << "it will be changed to NULL" << endl;
-  if (node->left != succ) succ->left = node->left;
-  if (succ->left) cout << succ->value << "->left is now " << succ->left->value << endl;
-  else cout << succ->value << "->left is now NULL" << endl;
-
-  if (succ->right) cout << succ->value << "->right is currently " << succ->right->value << endl;
-  else cout << succ->value << "->right is currently NULL" << endl;
-  if (node->right) cout << "it will be changed to " << node->right->value << endl;
-  else cout << "it will be changed to NULL" << endl;
-  if (node->right != succ) succ->right = node->right;
-  if (succ->right) cout << succ->value << "->left is now " << succ->right->value << endl;
-  else cout << succ->value << "->left is now NULL" << endl;
-
-  succ->parent = nParent;
-  succ->color = node->color;
-
-  if (nParent != NULL) {
-    if (nStat == 'l') nParent->left = succ;
-    else if (nStat == 'r') nParent->right = succ;
+  /*if(node->right->hasChildren())
+  {
+      cout << "RIGHT SDADS" << endl;
   }
-  if (parent) {
-    if (stat == 'l') parent->left = NULL;
-    else if (stat == 'r') parent->right = NULL;
-  }
-  if (tree == node) tree = succ;
-  else delete node;
+    if(!node->right->hasChildren() && !node->left->hasChildren() || succ->color == 'r')
+    {*/
+      if (succ->left) cout << succ->value << "->left is currently " << succ->left->value << endl;
+      else cout <<succ->value << "->left is currently NULL" << endl;
+      if (node->left) cout << "it will be changed to " << node->left->value << endl;
+      else cout << "it will be changed to NULL" << endl;
+      if (node->left != succ) succ->left = node->left;
+      if (succ->left) cout << succ->value << "->left is now " << succ->left->value << endl;
+      else cout << succ->value << "->left is now NULL" << endl;
+
+      if (succ->right) cout << succ->value << "->right is currently " << succ->right->value << endl;
+      else cout << succ->value << "->right is currently NULL" << endl;
+      if (node->right) cout << "it will be changed to " << node->right->value << endl;
+      else cout << "it will be changed to NULL" << endl;
+      if (node->right != succ) succ->right = node->right;
+      if (succ->right) cout << succ->value << "->left is now " << succ->right->value << endl;
+      else cout << succ->value << "->left is now NULL" << endl;
+
+      succ->parent = nParent;
+      succ->color = node->color;
+
+
+      if (nParent != NULL) {
+	if (nStat == 'l') nParent->left = succ;
+	else if (nStat == 'r') nParent->right = succ;
+      }
+      if (parent) {
+	if (stat == 'l') parent->left = NULL;
+	else if (stat == 'r') parent->right = NULL;
+      }
+      if (tree == node) tree = succ;
+      else delete node;
+      
+      if(succ->hasChildren())
+      {
+	if(succ->color == 'r')
+	{
+	    if(succ->right != NULL && succ->left != NULL)
+	    {
+		if(succ->left->color != succ->right->color)
+		{
+		    succ->left->color = 'b';
+		    succ->right->color = 'b';
+		}
+	    }	
+	}
+      }
+  //}
+
+  /*if(node->color == 'b')
+  {
+      cout << "Checking for DB" << endl;
+      DBCase1(tree,node);
+  }*/
 
 }
 
@@ -421,4 +453,69 @@ void printTree(Node*& tree, int indent) {
     cout << endl;
     if (tree->left) printTree(tree->left, indent + 4);
   }
+}
+
+/*
+ * for db cases, checks which db case it is
+ */
+void DBCase1(Node*& tree,Node*& node)
+{
+    Node* succ = inOrderSuccessor(node);
+    if(node->parent == NULL)
+    {
+	return;
+    }
+    else 
+	DBCase2(tree, node);
+}
+
+void DBCase2(Node*&tree, Node*& node)
+{
+    
+    if(node->sibling())
+    {
+	if(node->sibling()->color == 'r' )
+	{
+	    if(node->child() == 'l')
+	    {
+		cout << "LEFT BITCH";
+		node->parent->color = 'r';
+		node->sibling()->color = 'b';
+		tree->parent = tree->right;
+		tree->right->left = tree;
+		tree = tree->right;
+		tree->parent = NULL;
+		tree->left->left = node;
+		if(tree->right->left != NULL)
+		    tree->left->right = tree->right->left;
+	    }
+	    else
+	    {
+		cout << "RIGHT BITCH";
+		node->parent->color = 'r';
+		node->sibling()->color = 'b';
+		tree->parent = tree->left;
+		tree->left->right= tree;
+		tree = tree->left;
+		tree->parent = NULL;
+		tree->right->right= node;
+		if(tree->left->right!= NULL)
+		    tree->right->left= tree->left->right;
+	    }
+	}
+    
+    DBCase3(tree, node);
+    }
+}
+
+void DBCase3(Node*& tree, Node*& node)
+{
+    if(node->parent->color == 'b' 
+	    && node->sibling()->color == 'b'
+	    && node->sibling()->left->color == 'b'
+	    && node->sibling()->right->color == 'b'
+	    )
+    {
+	node->sibling()->color = 'r';
+    }
 }
